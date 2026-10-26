@@ -55,3 +55,22 @@ export function cleanRoles(
   }
   return out;
 }
+
+/** Replace real character names with "Character 1", "Character 2", … in order of first appearance. */
+export function anonymizeSpeakers(script: ScriptLine[]): {
+  labelled: ScriptLine[];
+  names: Record<string, string>;
+} {
+  const labelOf = new Map<string, string>();
+  const names: Record<string, string> = {};
+  const labelled = script.map(({ speaker, line }) => {
+    let label = labelOf.get(speaker);
+    if (!label) {
+      label = `Character ${labelOf.size + 1}`;
+      labelOf.set(speaker, label);
+      names[label] = speaker;
+    }
+    return { speaker: label, line };
+  });
+  return { labelled, names };
+}

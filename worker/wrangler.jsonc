@@ -8,7 +8,7 @@
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LobbyDO"] }],
   "r2_buckets": [{ "binding": "LEDGER", "bucket_name": "project-files" }],
   "vars": {
-    "GEMINI_MODEL": "gemini-2.5-flash",
+    "GEMINI_MODEL": "gemini-3.5-flash",
     // Zero Trust: e.g. "yourteam.cloudflareaccess.com" and the Access app's AUD tag.
     "CF_ACCESS_TEAM_DOMAIN": "",
     "CF_ACCESS_AUD": "",

@@ -52,18 +52,24 @@ function mockGemini(schema: object): unknown {
 
 async function callGemini(env: Env, prompt: string, schema: object): Promise<unknown> {
   if (env.GEMINI_API_KEY === 'mock') return mockGemini(schema);
-  const model = env.GEMINI_MODEL || 'gemini-2.5-flash';
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: 'application/json', responseSchema: schema },
-      }),
-    },
-  );
+  const model = env.GEMINI_MODEL || 'gemini-3.5-flash';
+  let res!: Response;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: { responseMimeType: 'application/json', responseSchema: schema },
+        }),
+      },
+    );
+    // 429/503 are transient capacity errors: back off and retry.
+    if (res.status !== 429 && res.status !== 503) break;
+    await new Promise((r) => setTimeout(r, 1000 * 2 ** attempt));
+  }
   if (!res.ok) throw new Error(`Gemini error ${res.status}`);
   const body = (await res.json()) as {
     candidates?: { content?: { parts?: { text?: string }[] } }[];
@@ -108,6 +114,7 @@ export function generateScript(
   const prompt =
     `Write the movie scene "${target}" in the style of "${style}".\n` +
     `Use 2-5 speakers with consistent character names. Keep it playable aloud by friends: 12-30 lines, each line short. ` +
-    `Return a JSON array of objects with "speaker" and "line" keys, in order. No stage directions in lines.`;
+    `Return a JSON array of objects with "speaker" and "line" keys, in order. No stage directions in lines. ` +
+    `Never say a character's name inside any line (no one addresses anyone by name), so the speakers can stay anonymous.`;
   return withValidation(() => callGemini(env, prompt, scriptSchema), validateScript);
 }

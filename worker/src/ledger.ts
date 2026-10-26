@@ -5,6 +5,7 @@ export interface LedgerEntry {
   prompt_data: PromptData;
   script_transcript: ScriptLine[];
   winner: string;
+  character_names?: Record<string, string>;
 }
 
 export function ledgerKey(sessionId: string, now = new Date()): string {

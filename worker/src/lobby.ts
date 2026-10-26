@@ -3,12 +3,14 @@ import type { ClientMessage, GameState, Player, ServerMessage } from '../../shar
 import type { Env } from './env';
 import { clarifyScene, generateScript } from './gemini';
 import { writeLedger } from './ledger';
-import { cleanRoles, validateName } from './validate';
+import { anonymizeSpeakers, cleanRoles, validateName } from './validate';
 
 interface Stored {
   state: GameState;
   /** token -> player id; never sent to clients */
   tokens: Record<string, string>;
+  /** "Character N" label -> real character name; hidden from players, kept for the ledger */
+  characterNames?: Record<string, string>;
 }
 
 interface Attachment {
@@ -173,6 +175,7 @@ export class LobbyDO extends DurableObject<Env> {
           writeLedger(this.env, s.session_id, {
             prompt_data: s.promptData!,
             script_transcript: s.current_script,
+            character_names: this.data.characterNames,
             winner: winner.name,
           }).catch((e) => console.error('ledger write failed', e)),
         );
@@ -245,7 +248,10 @@ export class LobbyDO extends DurableObject<Env> {
     await this.commit();
     try {
       const { scene, style, chosen } = s.promptData!;
-      s.current_script = await generateScript(this.env, scene, style, chosen);
+      const script = await generateScript(this.env, scene, style, chosen);
+      const { labelled, names } = anonymizeSpeakers(script);
+      s.current_script = labelled;
+      this.data.characterNames = names;
       s.roles = {};
       s.rolesAssigned = false;
       s.status = 'acting';

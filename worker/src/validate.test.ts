@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cleanRoles, validateClarification, validateName, validateScript } from './validate';
+import { anonymizeSpeakers, cleanRoles, validateClarification, validateName, validateScript } from './validate';
 
 describe('validateScript', () => {
   it('accepts speaker/line arrays', () => {
@@ -36,5 +36,17 @@ describe('cleanRoles', () => {
     expect(cleanRoles({ A: 'p1' }, ['A', 'B'], ['p1'])).toEqual({ A: 'p1' });
     expect(cleanRoles({ C: 'p1' }, ['A'], ['p1'])).toBeNull();
     expect(cleanRoles({ A: 'zz' }, ['A'], ['p1'])).toBeNull();
+  });
+});
+
+describe('anonymizeSpeakers', () => {
+  it('labels speakers by first appearance and keeps the real names', () => {
+    const { labelled, names } = anonymizeSpeakers([
+      { speaker: 'Jules', line: 'a' },
+      { speaker: 'Vincent', line: 'b' },
+      { speaker: 'Jules', line: 'c' },
+    ]);
+    expect(labelled.map((l) => l.speaker)).toEqual(['Character 1', 'Character 2', 'Character 1']);
+    expect(names).toEqual({ 'Character 1': 'Jules', 'Character 2': 'Vincent' });
   });
 });
