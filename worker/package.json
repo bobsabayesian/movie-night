@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --var DEV_ADMIN:1",
-    "deploy": "wrangler deploy",
+    "dev": "mkdir -p ../web/dist && wrangler dev --var DEV_ADMIN:1",
+    "deploy": "npm run build -w web && wrangler deploy",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },

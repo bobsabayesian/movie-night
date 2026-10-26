@@ -11,13 +11,15 @@ Real-time party game: prompt Gemini for a movie scene in a given style, cast fri
 npm install
 echo 'GEMINI_API_KEY=...' > worker/.dev.vars
 # set "DEV_ADMIN": "1" in worker/wrangler.jsonc vars (local only)
-npm run dev:worker   # :8787
-npm run dev:web      # :5173, proxies /api
+npm run dev:worker   # :8787 (API; also serves web/dist if built)
+npm run dev:web      # Vite with hot reload, proxies /api to :8787
 ```
 Open `/admin` to create a lobby, `/lobby/<id>` on other tabs/phones to join.
 
 ## Deploy
-1. `wrangler secret put GEMINI_API_KEY`
-2. Set `CF_ACCESS_TEAM_DOMAIN` and `CF_ACCESS_AUD`; keep `DEV_ADMIN` as `0`.
-3. Zero Trust Access app covering `/admin*` and `/api/admin/*` (Google login, your email only).
-4. `npm run deploy -w worker`; deploy `web/dist` to Pages and route `/api/*` to the Worker on the same domain.
+The Worker serves the built SPA (static assets) and handles `/api/*`, so there is one deploy and one hostname.
+
+1. `npx wrangler secret put GEMINI_API_KEY` (from `worker/`)
+2. `npm run deploy -w worker` (builds `web/` first), then attach a custom domain to the Worker.
+3. Zero Trust: self-hosted Access app on that hostname covering `/admin*` and `/api/admin/*`, one Allow policy for your Google email.
+4. Set `CF_ACCESS_TEAM_DOMAIN` (`<team>.cloudflareaccess.com`) and `CF_ACCESS_AUD` (the app's AUD tag) in `worker/wrangler.jsonc`; keep `DEV_ADMIN` as `0`; deploy again.

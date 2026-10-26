@@ -2,6 +2,15 @@
   "name": "scene-sync",
   "main": "src/index.ts",
   "compatibility_date": "2025-01-01",
+  // Custom domain (zone must be in this Cloudflare account); workers.dev is off so Access can't be bypassed.
+  "routes": [{ "pattern": "scenes.bobsabayesian.io", "custom_domain": true }],
+  "workers_dev": false,
+  // Serve the built SPA; only /api/* runs the Worker, everything else falls back to index.html.
+  "assets": {
+    "directory": "../web/dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
   "durable_objects": {
     "bindings": [{ "name": "LOBBY", "class_name": "LobbyDO" }]
   },
@@ -10,8 +19,8 @@
   "vars": {
     "GEMINI_MODEL": "gemini-3.5-flash",
     // Zero Trust: e.g. "yourteam.cloudflareaccess.com" and the Access app's AUD tag.
-    "CF_ACCESS_TEAM_DOMAIN": "",
-    "CF_ACCESS_AUD": "",
+    "CF_ACCESS_TEAM_DOMAIN": "little-firefly-6873.cloudflareaccess.com",
+    "CF_ACCESS_AUD": "367370a27d5fd521967417238dac4faa395502f07c58365f91efbff639b1bf4e",
     // Local dev only: skip Access JWT verification. Never set in production.
     "DEV_ADMIN": "0"
   }
