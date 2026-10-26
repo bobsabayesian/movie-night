@@ -8,20 +8,20 @@ import { useLobby } from './useLobby';
 const nameKey = (id: string) => `scene-sync:${id}:name`;
 
 export function Game({ lobbyId, admin }: { lobbyId: string; admin: boolean }) {
-  const [name, setName] = useState<string | null>(() => localStorage.getItem(nameKey(lobbyId)));
+  const [name, setName] = useState<string | null>(() => sessionStorage.getItem(nameKey(lobbyId)));
   const [tab, setTab] = useState<'game' | 'admin'>('game');
   const { state, me, conn, error, send } = useLobby(lobbyId, name, admin);
 
   // A rejected join (e.g. name taken) sends the user back to the name form.
   useEffect(() => {
     if (name && !me && error) {
-      localStorage.removeItem(nameKey(lobbyId));
+      sessionStorage.removeItem(nameKey(lobbyId));
       setName(null);
     }
   }, [error, me, name, lobbyId]);
 
   if (!name || (!me && conn !== 'connecting' && conn !== 'closed')) {
-    return <NameForm error={error} onSubmit={(n) => { localStorage.setItem(nameKey(lobbyId), n); setName(n); }} />;
+    return <NameForm error={error} onSubmit={(n) => { sessionStorage.setItem(nameKey(lobbyId), n); setName(n); }} />;
   }
   if (conn === 'kicked') return <Notice text="You were removed from the session." />;
   if (conn === 'ended') return <Notice text="The session has ended." />;

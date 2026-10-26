@@ -27,13 +27,13 @@ export function useLobby(lobbyId: string, name: string | null, admin: boolean) {
 
       ws.onopen = () => {
         retry = 0;
-        const token = localStorage.getItem(tokenKey(lobbyId)) ?? undefined;
+        const token = sessionStorage.getItem(tokenKey(lobbyId)) ?? undefined;
         ws.send(JSON.stringify({ type: 'join', name, token } satisfies ClientMessage));
       };
       ws.onmessage = (ev) => {
         const msg: ServerMessage = JSON.parse(ev.data);
         if (msg.type === 'joined') {
-          localStorage.setItem(tokenKey(lobbyId), msg.token);
+          sessionStorage.setItem(tokenKey(lobbyId), msg.token);
           setMe(msg.playerId);
           setConn('open');
           setError(null);
@@ -47,7 +47,7 @@ export function useLobby(lobbyId: string, name: string | null, admin: boolean) {
           setError(msg.message);
         } else if (msg.type === 'kicked') {
           stopped = true;
-          localStorage.removeItem(tokenKey(lobbyId));
+          sessionStorage.removeItem(tokenKey(lobbyId));
           setConn('kicked');
         }
       };
