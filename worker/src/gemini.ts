@@ -37,7 +37,21 @@ const scriptSchema = {
   },
 };
 
+/** Canned responses so the game loop can be exercised without an API key. */
+function mockGemini(schema: object): unknown {
+  if (schema === clarifySchema) {
+    return { status: 'ok', candidates: [{ title: 'Mock scene', description: 'A canned scene' }] };
+  }
+  return [
+    { speaker: 'Vincent', line: 'Thou dost not tip, good sir?' },
+    { speaker: 'Jules', line: 'Nay, for service was but common.' },
+    { speaker: 'Vincent', line: 'Then let us part in peace.' },
+    { speaker: 'Jules', line: 'Aye, and mind thy tongue.' },
+  ];
+}
+
 async function callGemini(env: Env, prompt: string, schema: object): Promise<unknown> {
+  if (env.GEMINI_API_KEY === 'mock') return mockGemini(schema);
   const model = env.GEMINI_MODEL || 'gemini-2.5-flash';
   const res = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
