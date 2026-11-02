@@ -1,5 +1,6 @@
 import { isAdminRequest } from './access';
 import type { Env } from './env';
+import { listRounds } from './ledger';
 
 export { LobbyDO } from './lobby';
 
@@ -31,9 +32,17 @@ export default {
         const id = crypto.randomUUID().slice(0, 8);
         return Response.json({ id, joinPath: `/lobby/${id}` });
       }
+      if (request.method === 'GET' && path === '/api/admin/log') {
+        return Response.json(await listRounds(env));
+      }
       const m = path.match(/^\/api\/admin\/lobby\/([^/]+)\/ws$/);
       if (m && LOBBY_ID.test(m[1])) return forwardToLobby(request, env, m[1], true);
       return new Response('Not found', { status: 404 });
+    }
+
+    const info = path.match(/^\/api\/lobby\/([^/]+)\/info$/);
+    if (info && LOBBY_ID.test(info[1])) {
+      return env.LOBBY.get(env.LOBBY.idFromName(info[1])).fetch(new Request('https://lobby/info'));
     }
 
     const m = path.match(/^\/api\/lobby\/([^/]+)\/ws$/);

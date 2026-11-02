@@ -1,0 +1,31 @@
+{
+  "genres": ["Movie", "TV show", "Song", "Play", "Video game", "Commercial"],
+  "styles": [
+    "Shakespeare",
+    "Film noir",
+    "Pirates",
+    "Soap opera",
+    "Wes Anderson",
+    "Nature documentary",
+    "Western",
+    "Musical",
+    "Horror",
+    "Kids' cartoon",
+    "Sports commentary",
+    "Medieval epic",
+    "Reality TV",
+    "Sci-fi",
+    "Rom-com"
+  ],
+  "colors": [
+    { "name": "Red", "hex": "#ef4444" },
+    { "name": "Orange", "hex": "#f97316" },
+    { "name": "Lime", "hex": "#a3e635" },
+    { "name": "Green", "hex": "#22c55e" },
+    { "name": "Teal", "hex": "#14b8a6" },
+    { "name": "Blue", "hex": "#3b82f6" },
+    { "name": "Purple", "hex": "#a855f7" },
+    { "name": "Pink", "hex": "#ec4899" }
+  ],
+  "parts": { "min": 2, "max": 6, "default": 2 }
+}

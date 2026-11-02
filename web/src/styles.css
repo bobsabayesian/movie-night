@@ -48,15 +48,37 @@ button.choice span { color: var(--muted); font-size: 0.9em; }
 .speaker { display: block; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.06em; }
 .line--other { color: #6b7080; font-size: 0.85rem; }
 .line--mine {
-  color: #111; background: var(--accent); font-weight: 700; font-size: 1.35rem;
+  color: #111; background: var(--mine, var(--accent)); font-weight: 700; font-size: 1.35rem;
   padding: 10px 14px; border-radius: 10px;
 }
 
 .banner { background: var(--panel); border-radius: 12px; padding: 12px 16px; color: var(--muted); text-align: center; }
-.banner--mine { background: var(--accent); color: #111; display: grid; gap: 0; }
+.banner--mine { background: var(--mine, var(--accent)); color: #111; display: grid; gap: 0; }
 .banner--mine b { font-size: 1.5rem; }
 .cast { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .cast li { display: flex; justify-content: space-between; background: var(--panel); border-radius: 8px; padding: 6px 12px; }
 .cast li b { color: var(--muted); font-weight: 600; }
-.cast li.cast--mine { outline: 2px solid var(--accent); }
-.cast li.cast--mine b { color: var(--accent); }
+.cast li.cast--mine { outline: 2px solid var(--mine, var(--accent)); }
+.cast li.cast--mine b { color: var(--mine, var(--accent)); }
+
+.difficulty { display: grid; gap: 6px; }
+.difficulty-labels { display: flex; justify-content: space-between; color: var(--muted); }
+.difficulty-labels .on { color: var(--accent); font-weight: 700; }
+.difficulty input { padding: 0; accent-color: var(--accent); }
+.banner .style { display: block; font-size: 0.9rem; opacity: 0.8; }
+
+.dot { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 50%; margin-right: 6px; vertical-align: baseline; }
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch { width: 40px; height: 40px; padding: 0; border-radius: 50%; border: 3px solid transparent; }
+.swatch.on { border-color: #fff; box-shadow: 0 0 0 2px #000 inset; }
+.swatch:disabled { opacity: 0.2; }
+button.secondary { background: #232733; color: var(--text); font-weight: 500; }
+.inline { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.inline button { width: auto; white-space: nowrap; }
+.field { display: grid; gap: 4px; }
+.choice-name { display: flex; align-items: center; }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+.toggle { display: flex; align-items: center; gap: 6px; background: #232733; padding: 6px 10px; border-radius: 999px; }
+.toggle input { width: auto; padding: 0; accent-color: var(--accent); }
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.log li { display: grid; gap: 2px; border-top: 1px solid #2a2f3a; padding-top: 8px; }

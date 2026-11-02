@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { anonymizeSpeakers, cleanRoles, validateClarification, validateName, validateScript } from './validate';
+import {
+  anonymizeSpeakers,
+  clampParts,
+  cleanRoles,
+  countSpeakers,
+  pickColor,
+  validateClarification,
+  validateName,
+  validateScript,
+} from './validate';
 
 describe('validateScript', () => {
   it('accepts speaker/line arrays', () => {
@@ -48,5 +57,29 @@ describe('anonymizeSpeakers', () => {
     ]);
     expect(labelled.map((l) => l.speaker)).toEqual(['Character 1', 'Character 2', 'Character 1']);
     expect(names).toEqual({ 'Character 1': 'Jules', 'Character 2': 'Vincent' });
+  });
+});
+
+describe('pickColor', () => {
+  const allowed = ['#ef4444', '#22c55e'];
+  it('accepts a free allowed color, case-insensitively', () => {
+    expect(pickColor('#EF4444', allowed, [])).toBe('#ef4444');
+  });
+  it('rejects taken, unknown and non-string colors', () => {
+    expect(pickColor('#ef4444', allowed, ['#ef4444'])).toBeNull();
+    expect(pickColor('#000000', allowed, [])).toBeNull();
+    expect(pickColor(undefined, allowed, [])).toBeNull();
+  });
+});
+
+describe('clampParts / countSpeakers', () => {
+  it('clamps into range and falls back on junk', () => {
+    expect(clampParts(10, 2, 6, 2)).toBe(6);
+    expect(clampParts(0, 2, 6, 2)).toBe(2);
+    expect(clampParts('abc', 2, 6, 3)).toBe(3);
+    expect(clampParts(3.6, 2, 6, 2)).toBe(4);
+  });
+  it('counts distinct speakers', () => {
+    expect(countSpeakers([{ speaker: 'A', line: 'x' }, { speaker: 'B', line: 'y' }, { speaker: 'A', line: 'z' }])).toBe(2);
   });
 });

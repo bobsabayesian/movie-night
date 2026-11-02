@@ -16,6 +16,11 @@ npm run dev:web      # Vite with hot reload, proxies /api to :8787
 ```
 Open `/admin` to create a lobby, `/lobby/<id>` on other tabs/phones to join.
 
+## Config and log
+- `shared/config.json`: genres, styles, player colors, and the min/max/default number of parts. The host can switch genres and styles off per session in the Admin tab; colors are fixed.
+- Every round is logged to R2 (`project-files`) as `movie-night/rounds/<timestamp>_<session>_<round>.json` with who chose it, genre, style, parts, the script and the outcome (won, nobody, abandoned). The Admin tab lists them.
+- `npm run smoke` runs an end-to-end test against a local worker started with `--var DEV_ADMIN:1 --var GEMINI_API_KEY:mock`.
+
 ## Deploy
 The Worker serves the built SPA (static assets) and handles `/api/*`, so there is one deploy and one hostname.
 

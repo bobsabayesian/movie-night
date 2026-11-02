@@ -74,3 +74,20 @@ export function anonymizeSpeakers(script: ScriptLine[]): {
   });
   return { labelled, names };
 }
+
+export function countSpeakers(script: ScriptLine[]): number {
+  return new Set(script.map((l) => l.speaker)).size;
+}
+
+/** A free color from the allowed list, or null. */
+export function pickColor(raw: unknown, allowed: string[], taken: string[]): string | null {
+  if (typeof raw !== 'string') return null;
+  const c = raw.toLowerCase();
+  const match = allowed.find((a) => a.toLowerCase() === c);
+  return match && !taken.some((t) => t.toLowerCase() === c) ? match : null;
+}
+
+export function clampParts(raw: unknown, min: number, max: number, fallback: number): number {
+  const n = Math.round(Number(raw));
+  return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+}

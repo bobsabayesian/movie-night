@@ -5,7 +5,7 @@ export type Conn = 'connecting' | 'open' | 'closed' | 'kicked' | 'ended';
 
 const tokenKey = (id: string) => `scene-sync:${id}:token`;
 
-export function useLobby(lobbyId: string, name: string | null, admin: boolean) {
+export function useLobby(lobbyId: string, name: string | null, color: string | null, admin: boolean) {
   const [state, setState] = useState<GameState | null>(null);
   const [me, setMe] = useState<string | null>(null);
   const [conn, setConn] = useState<Conn>('connecting');
@@ -28,7 +28,7 @@ export function useLobby(lobbyId: string, name: string | null, admin: boolean) {
       ws.onopen = () => {
         retry = 0;
         const token = sessionStorage.getItem(tokenKey(lobbyId)) ?? undefined;
-        ws.send(JSON.stringify({ type: 'join', name, token } satisfies ClientMessage));
+        ws.send(JSON.stringify({ type: 'join', name, color: color ?? undefined, token } satisfies ClientMessage));
       };
       ws.onmessage = (ev) => {
         const msg: ServerMessage = JSON.parse(ev.data);
@@ -64,7 +64,7 @@ export function useLobby(lobbyId: string, name: string | null, admin: boolean) {
       window.clearTimeout(timer);
       wsRef.current?.close();
     };
-  }, [lobbyId, name, admin]);
+  }, [lobbyId, name, color, admin]);
 
   const send = useCallback((msg: ClientMessage) => {
     wsRef.current?.send(JSON.stringify(msg));
